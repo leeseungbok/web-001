@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang= "ko">
+<head>
+<meta charset="utf-8">
+<title>드래그를 이용해서 스플릿바를 움직이기</title>
+<style>
+
+/* html{cursor: url(cursor.png), auto} */
+
+*{
+        box-sizing: border-box;
+        margin: 0;
+        border: 0;
+        padding: 0;
+    }
+
+.container {
+    display: grid;
+
+    /*column을 2칸으로 나눔 */
+    grid-template-columns: 200px 50px 1fr;
+    /* rem은 html 요소의 크기의 문자 폭 높이의 2배를 정한다 */
+
+    grid-template-rows: 2rem 1fr 2rem;
+    /* grid-auto-rows: minmax(100px, auto); */
+
+    /* 박스 사이의 간격을 벌려줌*/
+
+    /* 아래 칸이 바닥까지 100% 닿도록 하게 만든다  */
+    min-height: 100vh;
+    background: lightgray;
+}
+
+/* toolbar */
+.header {
+    text-align: center;
+    grid-column: 1/4;
+    float: left;
+    display: inline-flex;
+    position: relative;
+    background: red;
+}
+.float1 {
+  margin-left: auto;
+}
+/* nav */
+.content {
+    grid-column: 1;
+    grid-row: 2;
+    background-color: blue;
+}
+
+.spliter {
+    grid-column: 2;
+    grid-row: 2;
+    background-color: black;
+}
+
+
+/* body */
+.right {
+    position: relative;
+    grid-column: 3;
+    grid-row: 2;
+    background-color: green;
+}
+/* footer */
+.footer {
+
+    grid-column: 1/4;
+    grid-row: 3;
+    background-color:gray;
+
+}
+</style>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.0.min.js" ></script>
+<script>
+
+    function drag_handler(ev) {
+        console.log("Drag: ", ev);
+        var option = `${ev.clientX}px 50px 1fr`
+        console.log(`option: ${option}`)
+        $('.container').css({
+            "grid-template-columns" : option
+        });
+    };
+    function dragend_handler(ev) {
+        console.log("DragEnd: ", ev);
+        var option = `${ev.clientX}px 50px 1fr`
+        console.log(`option: ${option}`)
+        $('.container').css({
+            "grid-template-columns" : option
+        });
+    }
+
+  $(function(){
+    function move_left(move_range) {
+        var move_range = typeof move_range !== 'undefined' ? move_range : -20;
+
+        console.log('move_range : ', move_range);
+
+        /* content 포지션이 왼쪽으로 정해져 있다 */
+        var content_position_x = $('.content').position().left;
+
+        /* content x좌표가 어디 위치인지를 알려주고 아래 option에서 new_content_position에서 움직인만큼 공간을 먹는다*/
+        var content_width = $('.content').width();
+        var content_right_x = content_position_x + content_width;
+
+        /* right 포지션이 오른쪽으로 정해져 있다*/
+        var right_position_x = $('.right').position().left;
+        var right_width = $('.right').width();
+        var right_right_x = right_position_x + right_width;
+
+        var new_content_position = 0;
+        if (content_right_x > right_right_x) {
+            new_content_position = right_right_x;
+        } else {
+            new_content_position = content_right_x + move_range;
+        }
+
+        console.log('content div position x: ', content_position_x);
+        console.log('content div width: ', content_width);
+        console.log('prev right_right_x: ', content_right_x);
+        console.log('cur  right_right_x: ', new_content_position);
+
+        /* option을 이용해 x좌표에 칼럼을 좌우로 움직일 수 있는 기능을 만듬*/
+        var option = `${new_content_position}px 50px 1fr`
+        /* container에 위 option 기능을 부여함 */
+        $('.container').css({
+            "grid-template-columns" : option
+        });
+    }
+
+    function move_right(move_range) {
+        var move_range = typeof move_range !== 'undefined' ? move_range : 20;
+
+        console.log('move_range : ', move_range);
+        /* content 포지션이 왼쪽으로 정해져 있다*/
+        var content_position_x = $('.content').position().left;
+        var content_width = $('.content').width();
+
+        /* content x좌표가 어디 위치인지를 알려주고 아래 option에서 new_content_position에서 움직인만큼 공간을 먹는다*/
+        var content_right_x = content_position_x + content_width;
+
+        /* right 포지션이 오른쪽으로 정해져 있다*/
+        var right_position_x = $('.right').position().left;
+        var right_width = $('.right').width();
+        var right_right_x = right_position_x + right_width;
+
+        /* 만약 content_right_x가 right_right_x보다 커지면 right_right_x공간을 오른쪽에서 계속 생성하라*/
+        var new_content_position = 0;
+        if (content_right_x > right_right_x) {
+            new_content_position = right_right_x;
+        } else {
+            new_content_position = content_right_x + move_range;
+        }
+
+        console.log('content div position x: ', content_position_x);
+        console.log('content div width: ', content_width);
+        console.log('prev content_right_x: ', content_right_x);
+        console.log('cur  content_right_x: ', new_content_position);
+
+        /* option을 이용해 x좌표에 칼럼을 좌우로 움직일 수 있는 기능을 만듬*/
+        var option = `${new_content_position}px 50px 1fr`
+        /* container에 위 option 기능을 부여함*/
+        $('.container').css({
+            "grid-template-columns" : option
+        });
+    }
+
+    $("#btn1").on('click',function(event) {
+            move_left()
+    });
+
+    $("#btn2").on('click',function(event) {
+            move_right()
+    });
+
+    // $(".spliter").on({
+    //     "dragstart": function(event){
+    //         console.log("dragstart:", event);
+    //         var option = `${event.clientX}px 50px 1fr`
+    //         console.log(`option: ${option}`)
+    //         $('.container').css({
+    //             "grid-template-columns" : option
+    //         });
+    //     },
+    //     "drag": function(event){
+    //         var option = `${event.clientX}px 50px 1fr`
+    //         console.log(`option: ${option}`)
+    //         $('.container').css({
+    //             "grid-template-columns" : option
+    //         });
+    //     },
+    //     "dragend": function(event){
+    //         console.log("dragend:", event);
+    //         var option = `${event.clientX}px 50px 1fr`
+    //         console.log(`option: ${option}`)
+    //         $('.container').css({
+    //             "grid-template-columns" : option
+    //         });
+    //     },
+    // });
+
+
+});
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="container">
+        <div class="header"class="toolbox">
+            toolbar(버튼)
+            <div class="float1">
+                <button type="button" id="btn1">left</button>
+                <button type="button" id="btn2">right</button>
+            </div>
+        </div>
+        <div class="content">
+            본문
+        </div>
+        <!-- <div  class="spliter"> -->
+        <div class="spliter"
+            ondrag="drag_handler(event);"
+            ondragstart="dragstart_handler(event);"
+            ondragend="dragend_handler(event);"
+            draggable="true">
+        </div>
+
+        <div class="right">
+            grid(내용)
+        </div>
+        <div class="footer">
+            statusbar
+        </div>
+    </div>
+</body>
+</html>

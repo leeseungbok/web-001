@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang= "ko">
+<head>
+    <!--jsTree 테마 포함(CSS 파일을 포함하는 것이 성능에 가장 좋다.)-->
+    <!-- <link rel="stylesheet" href="dist/themes/default/style.min.css" /> -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>레이아웃 네비div에 트리넣기</title>
+
+    <!-- <link rel="stylesheet" href="//static.jstree.com/3.3.11/assets/bootstrap/css/bootstrap.min.css" /> -->
+	<!-- <link rel="stylesheet" href="//static.jstree.com/3.3.11/assets/dist/themes/default/style.min.css" /> -->
+    <!-- <link rel="stylesheet" href="//static.jstree.com/3.3.11/assets/docs.css" /> -->
+
+    <style>
+        /* html{cursor: url(cursor.png), auto} */
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            border: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: grid;
+
+            /*column을 2칸으로 나눔 */
+            grid-template-columns: 200px 50px 1fr;
+            /* rem은 html 요소의 크기의 문자 폭 높이의 2배를 정한다 */
+
+            grid-template-rows: 2rem 1fr 2rem;
+            /* grid-auto-rows: minmax(100px, auto); */
+
+            /* 박스 사이의 간격을 벌려줌*/
+
+            /* 아래 칸이 바닥까지 100% 닿도록 하게 만든다  */
+            min-height: 100vh;
+            background: lightgray;
+        }
+
+        /* toolbar */
+        .header {
+            text-align: center;
+            grid-column: 1/4;
+            float: left;
+            display: inline-flex;
+            position: relative;
+            background: red;
+        }
+        .float1 {
+        margin-left: auto;
+        }
+        /* nav */
+        .content {
+            grid-column: 1;
+            grid-row: 2;
+            background-color: white;
+        }
+
+        .spliter {
+            grid-column: 2;
+            grid-row: 2;
+            background-color: black;
+        }
+
+
+        /* body */
+        .right {
+            position: relative;
+            grid-column: 3;
+            grid-row: 2;
+            background-color: green;
+        }
+        /* footer */
+        .footer {
+
+            grid-column: 1/4;
+            grid-row: 3;
+            background-color:gray;
+
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.0.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="header"class="toolbox">
+            toolbar(버튼)
+            <div class="float1">
+                <button type="button" id="btn1">left</button>
+                <button type="button" id="btn2">right</button>
+            </div>
+        </div>
+        <div class="content">
+            <div id="jstree">
+            </div>
+        </div>
+
+        <div class="spliter"
+            ondrag="drag_handler(event);"
+            ondragend="dragend_handler(event);"
+            draggable="true">
+        </div>
+
+        <div class="right">
+            grid(내용)
+        </div>
+        <div class="footer">
+            statusbar
+        </div>
+    </div>
+
+    <script>
+
+        function drag_handler(ev) {
+            console.log("Drag: ", ev);
+            var option = `${ev.clientX}px 50px 1fr`
+            console.log(`option: ${option}`)
+            $('.container').css({
+                "grid-template-columns" : option
+            });
+        };
+        function dragend_handler(ev) {
+            console.log("DragEnd: ", ev);
+            var option = `${ev.clientX}px 50px 1fr`
+            console.log(`option: ${option}`)
+            $('.container').css({
+                "grid-template-columns" : option
+            });
+        }
+
+        $(function(){
+            $(".spliter").on({
+                "dragstart": function(event){
+                    console.log("dragstart:", event);
+                    var option = `${event.clientX}px 50px 1fr`
+                    console.log(`option: ${option}`)
+                    $('.container').css({
+                        "grid-template-columns" : option
+                    });
+                },
+                "drag": function(event){
+                    var option = `${event.clientX}px 50px 1fr`
+                    console.log(`option: ${option}`)
+                    $('.container').css({
+                        "grid-template-columns" : option
+                    });
+                },
+                "dragend": function(event){
+                    console.log("dragend:", event);
+                    var option = `${event.clientX}px 50px 1fr`
+                    console.log(`option: ${option}`)
+                    $('.container').css({
+                        "grid-template-columns" : option
+                    });
+                },
+            });
+
+            $('#jstree').jstree({
+                "core" : {
+                    'data' : [
+                        { "id" : "ajson1", "parent" : "#", "text" : "html_data",
+                        'state' : {'opened' : true}},
+                        { "id" : "ajson2", "parent" : "ajson1", "text" : "basic_markup" },
+
+                        { "id" : "ajson3", "parent" : "ajson1", "text" : "nodes_with_children" },
+
+                        { "id" : "ajson4", "parent" : "ajson1", "text" : "setting_initial_state_with_classes" },
+
+                        { "id" : "ajson5", "parent" : "ajson1", "text" : "setting_initial_state_with_data_attribute" },
+
+                        { "id" : "ajson6", "parent" : "ajson1", "text" : "Loading with AJAX" },
+
+
+                        { "id" : "plugins", "parent" : "#", "text" : "plugins",
+                        'state' : {'opened' : true}},
+                        { "id" : "plugins-checkbox", "parent" : "plugins", "text" : "checkbox" },
+                        { "id" : "plugins-contextmenu", "parent" : "plugins", "text" : "contextmenu" },
+                        { "id" : "plugins-dnd", "parent" : "plugins", "text" : "dnd" },
+                        { "id" : "plugins-massload", "parent" : "plugins", "text" : "massload" },
+                        { "id" : "plugins-search", "parent" : "plugins", "text" : "search" },
+                        { "id" : "plugins-sort", "parent" : "plugins", "text" : "sort" },
+                        { "id" : "plugins-state", "parent" : "plugins", "text" : "state" },
+                        { "id" : "plugins-types", "parent" : "plugins", "text" : "types" },
+                        { "id" : "plugins-unique", "parent" : "plugins", "text" : "unique" },
+                        { "id" : "plugins-wholerow", "parent" : "plugins", "text" : "wholerow" },
+                        { "id" : "plugins-changed", "parent" : "plugins", "text" : "changed" },
+                        { "id" : "conditionalselect", "parent" : "plugins", "text" : "conditionalselect" }
+
+                        // "checkbox",
+                        // "contextmenu",
+                        // "dnd",
+                        // "massload",
+                        // "search",
+                        // "sort",
+                        // "state",
+                        // "types",
+                        // "unique",
+                        // "wholerow",
+                        // "changed",
+                        // "conditionalselect"
+                    ]
+                }
+            });
+
+            $('#jstree').on("changed.jstree", function (e, data) {
+                // console.log('jstree event: ', e);
+                // console.log('jstree data: ', data);
+
+                console.log(data.node.text);
+
+                switch (data.node.text) {
+
+                    case 'basic_markup':
+                        console.warn('display basic_markup plugin');
+
+                        $('.right').empty();
+                        $('.right').append("<div id='basic_markup'></div>");
+
+                        var plugins_data = [
+
+                            {"id" : "1", "parent": "#", "text": "Root node 1"},
+                            {"id" : "2", "parent": "#", "text": "Root node 2"}
+                        ]
+
+                        $('.right #basic_markup').jstree({
+                            'core': {
+                                'data': plugins_data
+                            },
+                            "basic_markup": {
+                                "keep_selected_style": false
+                            },
+                            "plugins": ["basic_markup"]
+                        });
+                        break;
+
+
+                    case 'nodes_with_children':
+                        console.warn('display nodes_with_children plugin');
+
+                        $('.right').empty();
+                        $('.right').append("<div id='nodes_with_children'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node 1", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                                selected  : true   // is the node selected
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Child node 1"},
+                            {"id" : "3", "parent": "1", "text": "Child node 2"}
+                        ]
+
+                        $('.right #nodes_with_children').jstree({
+                            'core': {
+                                'data': plugins_data
+                            },
+                            "basic_markup": {
+                                "keep_selected_style":false
+                            },
+                            "plugins": ["nodes_with_children"]
+                        });
+                        break;
+
+                    case 'setting_initial_state_with_classes':
+                        console.warn('display setting_initial_state_with_classes plugin');
+
+                        $('.right').empty();
+                        $('.right').append("<div id='setting_initial_state_with_classes'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Child", state: {
+
+                                selected  : true   // is the node selected
+                            }}
+                        ]
+
+                        $('.right #setting_initial_state_with_classes').jstree({
+                            'core': {
+                                'data': plugins_data,
+                                "check_callback" : true
+                            },
+                            "setting_initial_state_with_classes": {
+                                "keep_selected_style": false
+                            },
+                            "plugins": ["setting_initial_state_with_classes"]
+                        });
+                        break;
+
+                    case 'setting_initial_state_with_data_attribute':
+                        console.warn('display setting_initial_state_with_data_attribute plugin');
+
+                        $('.right').empty();
+                        $('.right').append("<div id='setting_initial_state_with_data_attribute'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                                selected  : true   // is the node selected
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Child"},
+                            {"id" : "3", "parent": "1", "text": "Child", "icon" : "images/tree.png"},
+                            {"id" : "4", "parent": "1", "text": "Child", "icon" : "images/leaf.png"}
+                        ]
+
+                        $('.right #setting_initial_state_with_data_attribute').jstree({
+                            'core': {
+                                'data': plugins_data,
+                                "check_callback" : true
+                            },
+                            "setting_initial_state_with_data_attribute": {
+                                "keep_selected_style": false
+                            },
+                            "plugins": ["setting_initial_state_with_data_attribute"]
+                        });
+                        break;
+
+                    case 'Loading with AJAX':
+                        console.warn('display Loading with AJAX plugin');
+
+                        $('.right').empty();
+                        $('.right').append("<div id='Loading with AJAX'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                                selected  : true   // is the node selected
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Child"},
+                            {"id" : "3", "parent": "1", "text": "Child", "icon" : "images/tree.png"},
+                            {"id" : "4", "parent": "1", "text": "Child", "icon" : "images/leaf.png"}
+                        ]
+
+                        $('.right #Loading with AJAX').jstree({
+                            'core': {
+                                'data': plugins_data,
+                                "check_callback" : true
+                            },
+                            "Loading with AJAX": {
+                                "keep_selected_style": false
+                            },
+                            "plugins": ["Loading with AJAX"]
+                        });
+                        break;
+
+                    case 'checkbox':
+                        console.warn('display checkbox plugin');
+
+                        $('.right').empty();
+                        $('.right').append("<div id='checkbox'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Child node 1"},
+                            {"id" : "3", "parent": "1", "text": "Child node 2"}
+                        ]
+
+                        $('.right #checkbox').jstree({
+                            'core': {
+                                'data': plugins_data
+                            },
+                            "checkbox": {
+                                "keep_selected_style":false
+                            },
+                            "plugins": ["checkbox"]
+                        });
+                        break;
+
+                    case 'contextmenu':
+                        console.warn('display contextmenu plugin');
+
+                        $('.right').empty();
+                        $('.right').append("<div id='contextmenu'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+
+                            {"id" : "2", "parent": "1", "text": "Contextmenu", state:{
+                                selected  : true   // is the node selected
+
+                            }},
+
+                        ]
+
+                        $('.right #contextmenu').jstree({
+                            'core': {
+                                'data': plugins_data,
+                                // so that create works
+                                "check_callback" : true
+
+                            },
+                            "plugins": ["contextmenu"]
+                        });
+                        break;
+
+
+                    case 'dnd':
+                        console.warn('display dnd plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='dnd'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Child node 1"},
+                            {"id" : "3", "parent": "1", "text": "Child node 2"},
+                            {"id" : "4", "parent": "#", "text": "Root node2"},
+                            {"id" : "5", "parent": "1", "text": "Child node 2"},
+                        ]
+
+
+
+                        $('.right #dnd').jstree({
+                            "core" : {
+                                'data' : plugins_data,
+                                "check_callback" : true
+                            },
+                            "plugins": ["dnd"]
+                        });
+                        break;
+
+                    case 'massload':
+                        console.warn('display massload plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='massload'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Child node 1"},
+                            {"id" : "3", "parent": "1", "text": "Child node 2"},
+                            {"id" : "4", "parent": "#", "text": "Root node2"}
+                        ]
+
+
+
+                        $('.right #massload').jstree({
+                            "core" : {
+                                'data' : plugins_data,
+
+                            },
+                            "massload": {
+                                "url" : "/some/path",
+
+                            },
+                            "plugins": ["massload", "state"]
+                        });
+                        break;
+
+                    case 'search':
+                        console.warn('display search plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='search'></div>");
+                        $('.right').append("<input id='search-input' class='search-input' />");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Child node 1"},
+                            {"id" : "3", "parent": "1", "text": "Child node 2"},
+                            {"id" : "4", "parent": "#", "text": "Root node2"}
+                        ]
+
+                        $('.right #search').jstree({
+                            "plugins": ["search"],
+                            "core" : {
+                                'data' : plugins_data
+                            },
+                            "search": {
+                                "case_sensitive": false,
+                                "show_only_matches": true
+                            },
+                        });
+
+
+                        $(document).ready(function () {
+                            $(".search-input").keyup(function () {
+                                var searchString = $(this).val();
+                                $('#search').jstree('search', searchString);
+                            });
+                        });
+
+                        break;
+
+                    case 'sort':
+                        console.warn('display sort plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='sort'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "0"},
+                            {"id" : "3", "parent": "1", "text": "5"},
+                            {"id" : "4", "parent": "1", "text": "6"},
+                            {"id" : "5", "parent": "1", "text": "2"},
+                            {"id" : "6", "parent": "1", "text": "4"},
+                            {"id" : "7", "parent": "1", "text": "3"},
+                            {"id" : "8", "parent": "1", "text": "1"},
+                            {"id" : "9", "parent": "#", "text": "Root node 2"}
+                        ]
+
+
+
+                        $('.right #sort').jstree({
+
+                            "core" : {
+                                'data' : plugins_data
+                            },
+                            "plugins": ["sort"]
+                        });
+                        break;
+
+                    case 'state':
+                        console.warn('display state plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='state'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "A"},
+                            {"id" : "3", "parent": "1", "text": "few", state:{
+                                selected  : true   // is the node selected
+                            }},
+                            {"id" : "4", "parent": "1", "text": "more"},
+                            {"id" : "5", "parent": "1", "text": "node"},
+                            {"id" : "6", "parent": "#", "text": "Root node 2"}
+                        ]
+
+
+
+                        $('.right #state').jstree({
+                            "plugins" : [ "state" ],
+                            "core" : {
+                                'data' : plugins_data
+                            },
+                            "state": {
+                                "key" : "state"
+                            },
+                            "plugins": ["state"]
+                        });
+                        break;
+
+                    case 'types':
+                        console.warn('display types plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='types'></div>");
+
+                        // LSB:: 우리가 css로 layout을 만들었는데 href="//static.jstree.com/3.3.11/assets/bootstrap/css/bootstrap.min.css"을
+                        //       추가하면 layout이 깨진다
+
+                        // var plugins_data = [
+                        //     {"id" : "1", "parent": "#", "text": "Root node", "icon" : "images/check.png", state: {
+                        //         opened    : true,  // is the node open
+                        //         disabled  : false,  // is the node disabled
+                        //     }},
+                        //     {"id" : "2", "parent": "1", "text": "Node", "icon" : "images/flash.png"},
+                        //     {"id" : "3", "parent": "#", "text": "Root node 2", "icon" : "images/flash.png"}
+                        // ]
+
+                        // $('.right #types').jstree({
+                        //     "core" : {
+                        //         'data' : plugins_data
+                        //     },
+                        //     "plugins": ["types"]
+                        // });
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node","icon" : "images/check.png", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Node", "icon" : "images/flash.png"},
+                            {"id" : "3", "parent": "#", "text": "Root node 2", "icon" : "images/flash.png"}
+                        ]
+
+                        $('.right #types').jstree({
+                            "core" : {
+                                'data' : plugins_data
+                            },
+                            "types" : {
+                                "default" : {
+                                    "icon" : "glyphicon glyphicon-flash"
+                                },
+                                "demo" : {
+                                    "icon" : "glyphicon glyphicon-ok"
+                                }
+                            },
+                            "plugins": ["types"]
+                        });
+
+                        break;
+
+                    case 'unique':
+                        console.warn('display unique plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='unique'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Node"},
+                            {"id" : "3", "parent": "#", "text": "Root node 2"},
+                            {"id" : "4", "parent": "3", "text": "Node"},
+
+                        ]
+
+                        $('.right #unique').jstree({
+                            "core" : {
+                                'data' : plugins_data,
+                                "check_callback" : true
+                            },
+                            "plugins": ["unique", "dnd"]
+                        });
+                        break;
+
+                    case 'wholerow':
+                        console.warn('display wholerow plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='wholerow'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Node", state:{
+                                selected  : true   // is the node selected
+                            }},
+                            {"id" : "3", "parent": "#", "text": "Root node 2"}
+
+                        ]
+
+                        $('.right #wholerow').jstree({
+                            "core" : {
+                                'data' : plugins_data
+                            },
+                            "plugins": ["wholerow"]
+                        });
+                        break;
+
+                    case 'changed':
+                        console.warn('display changed plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='changed'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Node"},
+                            {"id" : "3", "parent": "#", "text": "Root node 2"}
+
+                        ]
+
+                        $('.right #changed')
+                        .on("changed.jstree", function (e, data) {
+                            console.log('선택: ', data.changed.selected); // newly selected
+                            console.log('해제: ', data.changed.deselected); // newly deselected
+                        })
+                        .jstree({
+                            "core" : {
+                                'data' : plugins_data
+                            },
+                            "plugins": ["changed"]
+                        });
+                        break;
+
+                    case 'conditionalselect':
+                        // LSB: 도대체 뭔소린지 모르겠다...
+                        console.warn('display conditionalselect plugin');
+                        $('.right').empty();
+                        $('.right').append("<div id='conditionalselect'></div>");
+
+                        var plugins_data = [
+                            {"id" : "1", "parent": "#", "text": "Root node", state: {
+                                opened    : true,  // is the node open
+                                disabled  : false,  // is the node disabled
+                            }},
+                            {"id" : "2", "parent": "1", "text": "Child node 1"},
+                            {"id" : "3", "parent": "1", "text": "Child node 2"}
+
+                        ]
+
+                        $('.right #conditionalselect').jstree({
+                            "core" : {
+                                'data' : plugins_data
+                            },
+                            "conditionalselect" : function (node, event) {
+                                console.log('node: ', node);
+                                console.log('event: ', event);
+                                return false;
+                            },
+                            "plugins": ["conditionalselect"]
+                        });
+                        break;
+                }
+            });
+        });
+        </script>
+</body>
+</html>
